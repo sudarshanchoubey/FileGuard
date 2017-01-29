@@ -10,6 +10,7 @@ import static encryptdecrypt.EncryptDecrypt.encryptFile;
 import static encryptdecrypt.EncryptDecrypt.getFile;
 import static encryptdecrypt.EncryptDecrypt.saveFile;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -20,13 +21,20 @@ import javax.crypto.spec.SecretKeySpec;
  * @author schoubey
  */
 public class Decrypt {
-    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+    private final String filePath;
+    private final String passKey;
+    
+    public Decrypt(String filePath, String passkey) {
+        this.filePath = filePath;
+        this.passKey = passkey;
+    }
+    
+    public void decrypt() throws UnsupportedEncodingException, NoSuchAlgorithmException, IOException {
         SecretKeySpec secretKey;
         byte[] key;
-        String myKey = "ThisIsAStrongPasswordForEncryptionAndDecryption";
-
+        
         MessageDigest sha = null;
-        key = myKey.getBytes("UTF-8");
+        key = passKey.getBytes("UTF-8");
         System.out.println(key.length);
         sha = MessageDigest.getInstance("SHA-1");
         key = sha.digest(key);
@@ -37,9 +45,10 @@ public class Decrypt {
 
         
         System.out.println(secretKey);
-        byte[] encContent = getFile("C:\\Users\\schoubey\\Desktop\\sunsout.enc");
+        byte[] encContent = getFile(filePath);
         byte[] decrypted = decryptFile(secretKey, encContent);
-        saveFile(decrypted, "C:\\Users\\schoubey\\Desktop\\sunsoutback.jpg");
+        
+        saveFile(decrypted, filePath + ".dec");
         System.out.println("Done");
     }
 }
